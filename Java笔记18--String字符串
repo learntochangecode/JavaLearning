@@ -1,0 +1,158 @@
+# 字符串 String
+
+* java.lang.String使用了final修饰，不能被继承；
+* 字符串底层封装了字符数组及字符数组的操作算法；
+* 字符串一旦创建，对象永远无法改变，但字符串引用可以重新赋值
+
+## 两种创建方法
+
+（1）String s = new String("abc");  //堆中新创建一个对象 value 指向常量池 abc。
+（2） String s1 = "abc";    //栈中创建 s1 变量指向"abc"，如果常量池中有，直接指向；如果常量池中没有，则创建一个"abc"。
+
+## String常量池
+
+java在堆内存中开辟了一段空间用于缓存所有使用字面量形式创建的字符串对象，并在后期再次使用该字面量创建字符串时重用对象，避免内存中堆积大量内容一样的字符串对象来减小内存开销。
+
+对于重复出现的字符串直接量，JVM会首先在常量池中查找，如果存在即返回该对象地址。
+
+`String s1 = "123abc";`
+
+以上代码的内存实现过程，首先在栈中创建一个引用s1，先查找常量池有没有同样的字符串，
+
+若找不到则创建一个新的字符串，然后把地址赋给s1；若找到则直接把地址赋给s1.（重用）
+
+`String s2 = new String("hello");`
+
+创建一个引用s2，之后在堆中创建一个新对象（不会查找有没有相同），让s2指向新对象。
+
+```
+String s4 = "123abc";
+String s5 = "123"+"abc";
+String s = "123";
+String s6 = s+"abc";
+System.out.println(s4==s5); //true
+System.out.println(s5==s6); //false
+```
+
+预计算：编译器在编译源代码时如果发现一个计算表达式中运算符两侧都是直接量(字面量)时则会直接进行计算，并将计算结果替换改计算表达式到字节码文件中。
+
+好处:每次JVM运行时就无需再次计算了。
+
+## 内存编码及长度
+
+采用Unicode编码，任何一个字符占用2个字节。
+
+## 串拼接
+
+当+号两边都是表达式时，表示数学运算；
+
+当+号两边至少有一边时字符串时，表示字符串的拼接。
+
+## String常用方法
+
+* ### length()方法
+
+  返回字符串的长度
+* ### 使用indexOf实现检索
+
+  `String.indexOf("str",x);`//从下标为x的地方开始寻找x，返回str的第一个下标
+
+  如果字符串检索中不含有指定内容则返回-1；
+* ### 使用lastIndexOf检索
+
+  `String.lastIndexOf("str",x);`//从下标为x的地方倒着向前寻找x，返回str的第一个下标
+* ### 使用subString截取子串
+
+  ```
+  String sub = str.substring(a);//截取字符串下标从a开始
+  String sub = str.substring(a,b);//截取字符串下标a-b的字串，包括a，不包括b（含左不含右）
+  ```
+* ### trim方法
+
+  `String.trim()`去除字符串两侧的空白字符,空格和制表符
+* ### chatAt()方法
+
+  返回某个下标在字符串中的字符，不能大于字符串长度，否则报异常IndexOutOfBounds
+* ### toUpperCase()方法
+
+  将当前字符串中的英文部分转换为全大写
+* ### toLowerCase()方法
+
+  将当前字符串中的英文部分转换为全大写
+* ### equalsIgnoreCase()方法
+
+  比较字符串，忽略大小写
+
+  如，判断验证码是否正确
+* ### endsWith()方法、startsWith()方法
+
+  判断当前字符串是否以所给字符串结尾(开头)
+
+  如，判断上传附件是不是给定格式，判断文件名是不是以jpg、txt结尾
+* ### valueOf()方法
+
+  `String str = String.valueOf(i);`将基本类型转换成String类型
+
+  `String str1 = i+"";`这样的转换方法比valueOf效率低
+
+## 检测回文
+
+```
+public class CharAt {
+    public static void main(String[] args) {
+        Scanner sc =new Scanner(System.in);
+        System.out.println("请输入字符串，会判断是不是回文串:");
+        String str = sc.nextLine();
+        isPalindrome(str);
+    }
+    public static void isPalindrome(String str) {
+        boolean flag = false;
+        for (int i = 0; i < str.length() / 2; i++) {
+            if (str.charAt(i) == str.charAt(str.length() - 1 - i)) {
+                flag = true;
+            }
+            if (str.charAt(i) != str.charAt(str.length() - 1 - i)) {
+                flag = false;
+                return;
+            }
+        }
+        if (flag) {
+            System.out.println("是回文");
+        } else {
+            System.out.println("不是回文");
+        }
+    }
+
+}
+```
+
+
+## 字符串不可变
+
+如果修改，则重新指向新对象。
+
+String 真正不可变有下面几点原因：
+（1）保存字符串的数组被 final 修饰且为私有的，并且 String 类没有提供/暴露修改这个字符串的方法。
+（2）String 类被 final 修饰导致其不能被继承，进而避免了子类破坏 String 不可变。
+
+final value 地址不可以修改，即不能指向新的对象。
+
+性能：三目运算符>switch>if
+
+## int与String 互换
+
+#### String转换为int
+
+int a = Integer.parseInt(s);
+
+int a = Integer.valueOf(s);
+
+int a = Integer.decode(s);
+
+#### int转换为String
+
+**String** s = **String**.valueOf(i);
+
+**String** s = **Integer**.toString(i);
+
+**String** s = "" + i;

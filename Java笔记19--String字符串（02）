@@ -1,0 +1,112 @@
+## StringBuilder
+
+### 是什么？
+
+Java 提供了 String 类来创建和操作字符串。String 类是不可变类，即一旦一个 String 对象被创建以后，包含在这个对象中的字符序列是不可改变的，直至这个对象被销毁。Java 提供了两个**可变**字符串类 StringBuffer 和 StringBuilder，中文翻译为“字符串缓冲区”。
+
+StringBuilder是专门用来修改String的一个API,内部维护一个可变的char数组,修改都是在这个数组上进行的, 内部会自动扩容.修改速度和性能开销优异.并且提供了修改字符串的常见操作对应的方法:增删改插
+
+### 为什么用？
+
+字符串是不变对象，修改字符串内容会产生新对象
+
+当遇到频繁拼接字符串时，会产生性能问题
+
+### StringBuilder类
+
+java.lang.StringBuilder
+
+专门用来修改字符串内容的工具类
+
+其提供了对字符串内容编辑的：增删改查的主要功能
+
+StringBuilder内部维护一个可变的char数组，所以修改内容不会创建新的String对象。
+
+### 创建
+
+默认的无参构造器创建时内部表示空字符串：""
+
+`StringBuilder builder = new StringBuilder();`
+
+基于一个给定的字符串str进行编辑
+
+`StringBuilder builder = new StringBuilder(str);`
+
+### 方法
+
+```
+double a = System.currentTimeMillis();
+StringBuilder builder = new StringBuilder("a");
+int count = 0;
+while(count<=10000000){
+    builder.append("a");
+    count++;
+}
+System.out.println("修改完毕");
+double b = System.currentTimeMillis();
+System.out.println(b-a);
+//修改完毕
+//27.0
+```
+
+增，append，将给定内容添加到字符串末尾，支持添加String、整数、浮点数、char字符和char数组
+
+`stringbuilder.append();`
+
+```
+String str = "newString";
+StringBuilder stringBuilder = new StringBuilder();
+stringBuilder.append(str);
+System.out.println(stringBuilder);//输出newString
+```
+
+改，replace，将当前字符串指定范围内的内容替换为新内容
+
+`stringbuilder.replace(start,end,str);`注意，包含start不包含end
+
+```
+StringBuilder stringBuilder = new StringBuilder("好好学习,天天向上");
+stringBuilder.replace(5,9,"锻炼身体");
+System.out.println(stringBuilder);
+//好好学习,锻炼身体
+```
+
+删，delete，将当前字符串的指定范围的内容删除
+
+```
+StringBuilder stringBuilder = new StringBuilder("好好学习,天天向上");
+stringBuilder.delete(0,5);
+System.out.println(stringBuilder);
+//天天向上
+```
+
+插入，insert，在指定位置**之前**插入内容，
+
+```
+StringBuilder stringBuilder = new StringBuilder("好好学习,天天向上");
+stringBuilder.insert(5,"才能");
+System.out.println(stringBuilder);
+//好好学习,才能天天向上
+```
+
+反转，reverse，倒序排列
+
+```
+StringBuilder stringBuilder = new StringBuilder("上海自来水来自海上");
+stringBuilder.reverse();
+System.out.println(stringBuilder);
+//上海自来水来自海上
+```
+
+
+### StringBuffer
+
+StringBuffer出现于JDK1.0，StringBuilder出现于JDK1.5，它们功能基本相似，方法也差不多。
+
+区别是，StringBuffer 是线程安全的，而 StringBuilder 则**没有实现线程安全功能**，所以**性能略高**。
+
+### 总结：
+
+操作少量的数据使用 String。
+单线程操作大量数据使用 StringBuilder。
+多线程操作大量数据使用 StringBuffer

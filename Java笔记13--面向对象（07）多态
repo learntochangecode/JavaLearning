@@ -1,0 +1,69 @@
+# 多态
+
+多态是指同一个类型的对象，在不同的情况下表现出不同的行为。它允许使用父类引用变量来引用子类对象，从而实现对不同子类对象的统一操作。
+
+**向上转型是自动进行的，不需要显式的类型转换，而向下转型（将父类引用转换为子类引用）需要显式的类型转换，并且在转换之前需要使用 ​**​`**instanceof**`​**​ 运算符进行类型检查，以确保转换的安全性。**
+
+## 向上造型/自动类型转换
+
+一个超类型引用指向派生类的对象。接口也可以看作超类。
+
+能点出来什么，看引用的类型。
+
+重写方法被调用时，看对象的类型，new谁就调用谁。
+
+```
+Dog o = new Dog();
+Animal o = new Dog();//只能点出Animal类的
+//一个Animal引用指向Dog的对象，Dog类是Animal类的子类，Dog具备最少两种形态
+```
+
+一个对象可以具有两种形态。
+
+多态的实际应用：
+
+* 将不同对象统一封装到超类数组中访问，实现代码复用
+
+  ```
+  Animal[] animals = new Animal[3];
+  animals[0] = new Dog("小黑");
+  animals[1] = new Cat("小花");
+  animals[2] = new Bird("小鸟");
+  ```
+* 将超类型作为参数或者返回值类型，传递或返回派生类对象，以扩大方法的应用范围，实现代码复用
+
+  ```
+  public static double calculateTotalArea(Shape[] shapes) {
+      double totalArea = 0.0;
+      for (Shape shape : shapes) {
+          totalArea += shape.getArea();
+      }
+      return totalArea;
+  }
+  Shape[] shapes = new Shape[2];
+  shapes[0] = new Rectangle(10, 20);
+  shapes[1] = new Circle(5);
+
+  double totalArea = calculateTotalArea(shapes);
+  System.out.println(totalArea); // 输出：314.1592653589793
+  ```
+
+## 向下造型/强制类型转换
+
+成功的条件只有两种：
+
+1.引用所指向的对象，就是该类型
+
+2.引用所指向的对象，实现了该接口或继承了该类型
+
+不符合条件就会发生ClassCastException类型转换异常
+
+在强转之前通过instanceof判断引用指向的对象是否是该类型
+
+何时需要强转：若想访问的属性/行为在超类中没有，则需要强制类型转换
+
+## Object
+
+是所有类的父类，方便实现多态；
+
+任何对象至少具备两种形态，它自己和Object

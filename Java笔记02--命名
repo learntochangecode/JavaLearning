@@ -1,0 +1,36 @@
+## Java命名规则
+
+ 1. 命名只能使用字母、数字、下划线、＄；
+ 2. 不能以数字开头；
+ 3. 区分大小写；
+ 4. 不能使用java关键字，例如：int、public、class；
+ 5. 可以使用中文但是不建议使用。
+---
+## 命名规范
+做到见名知意。
+
+## 1.包名
+包名使用小写英文字母进行命名，并使用“.”进行分割，每个被分割的单元只能包含一个名词。
+包命名常采用顶级域名作为前缀，例如 com，net，org，edu，gov，cn，io 等，随后紧跟公司/组织/个人名称以及功能模块名称。示例：
+package org.hibernate.action
+package com.alibaba.druid
+
+## 2.类名
+首字母大写，驼峰命名法
+`public myTestClass{ }`
+
+## 3.方法名
+首字母小写，驼峰命名法
+`public void myTestMethod(){ }`
+
+## 4.变量名
+首字母小写，第二个单词起首字母大写
+
+`String myTestVariable = "test";`
+
+## 5.常量
+
+全部大写,不同单词之间用下划线连接。
+`static final int MAX_VALUE = 10;`
+
+---

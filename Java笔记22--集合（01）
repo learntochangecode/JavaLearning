@@ -1,0 +1,245 @@
+# 集合
+
+集合是Java中用于存储和操作一组相同类型的元素的接口。Collection 接口是所有集合的接口，List 接口（继承自 Collection 接口）、Set 接口（继承自 Collection 接口）、Map 接口。
+
+相比数组的优势：提供了一组方法可以操作集合。
+
+java.util.List:List代表的是可重复且有序的集合；java.util.Set:Set代表的是不可重复的集合<br />
+
+## 集合的创建
+
+`Collection c = new ArrayList();//集合创建不需要指定长度`集合的size是动态的
+
+集合存放的是对象的引用，因此修改对象的属性值，集合遍历元素时也会对应修改。
+
+```
+Collection c = new ArrayList();
+Point p = new Point(1,2);
+c.add(p);
+System.out.println(p);
+System.out.println(c);
+p.setX(2);
+System.out.println(p);
+System.out.println(c);
+//(1,2)
+//[(1,2)]
+//(2,2)
+//[(2,2)]
+```
+
+## 集合通用方法
+
+### add方法
+
+`boolean add(E e)`，如果添加元素成功则返回true，失败返回false
+
+```
+Collection c = new HashSet();
+System.out.println(c.add("1"));
+System.out.println(c.add("1"));
+//true
+//false
+```
+
+**集合只能存放【引用类型】元素，之所以可以保存基本类型，是因为自动装箱特性，使基本类型转换成包装类。**
+
+```
+        Collection c = new ArrayList();
+        c.add(123);//实际执行c.add(Integer.valueOf(123));
+```
+
+### size方法
+
+`int size()`以int类型返回集合元素的个数，注意：集合没有长度，数组有长度length
+
+```
+Collection c = new HashSet();
+c.add("1");
+c.add("3");
+System.out.println(c);
+System.out.println(c.size());
+//[1,3]
+//
+```
+
+### isEmpty方法
+
+`boolean isEmpty()`,以boolean类型返回集合是否为空集，当且仅当size为0时，返回true
+
+**注意，isEmpty()和 == null 是不同的！**
+
+* `null` 是一个特殊的值，表示对象引用不指向任何有效的对象。
+* `isEmpty()` 是用于集合的方法，用于检查集合是否为空（即不包含任何元素）。
+
+```
+Collection c = new HashSet();
+System.out.println(c.isEmpty());
+//true
+
+list = null;
+System.out.println(list.isEmpty());  
+// 会抛出 NullPointerException 异常，因为 list 为 null
+```
+
+### clear()方法
+
+`void clear()`，清除集合中所有元素
+
+
+### contains()方法
+
+在System.out.println(collection)时，每个元素的输出调用该元素的toString方法。
+
+`boolean contains(Object o)`判断当前集合是否包含给定元素，若包含则返回true，否则返回false；
+
+**受equals方法影响，使用前要重写equals方法，**在 `contains()` 方法中调用了 `indexOf(o)` 方法，而 `indexOf(o)` 方法又会调用 `indexOfRange(o, 0, size)` 方法。对于 `ArrayList` 中的 `indexOfRange()` 方法而言，它会根据对象的引用或使用对象的 `equals()` 方法（如果对象不为 `null`）来比较元素的相等性。所以，在 `c.contains(p)` 中，它会遍历集合中的每个元素，并使用 `equals()` 方法来比较对象的相等性。由于 `Point` 类重写了 `equals()` 方法，并且 `p` 与集合中的某个元素在坐标上是相等的，`equals()` 方法会返回 `true`，从而使得 `indexOfRange()` 方法返回相应的索引位置，最终使 `c.contains(p)` 返回 `true`
+
+### remove()方法
+
+**受equals方法影响，使用前要重写equals方法。**
+
+`boolean remove(Object o)`方法，删除集合中给定元素，删除的逻辑页式删除集合中与参数给定元素equals比较为true的元素。如果集合存在重复元素，则只删除一次。
+
+## 集合间通用操作
+
+### addAll()方法
+
+`boolean addAll(Collection c)`将给定集合c中的所有元素添加到当前集合中，添加后当前集合元素发生了变化则返回true.
+
+```
+        Collection c1 = new ArrayList();
+        c1.add("java");
+        c1.add("c++");
+        c1.add("python");
+        System.out.println(c1);
+        Collection c2 = new ArrayList();
+        c2.add("android");
+        c2.add("ios");
+        System.out.println(c2);
+        c1.addAll(c2);
+        System.out.println(c1);
+//[java, c++, python]
+//[android, ios]
+//[java, c++, python, android, ios]
+```
+
+### containsAll()方法
+
+`boolean containsAll()`判断当前集合是否包含目标集合的所有元素，全部包含返回true，否则返回false
+
+### retainAll()方法
+
+`boolean retainAll(Collection c)`，取交集，仅保留当前集合中与目标集合c的共有元素。
+
+### removeAll()方法
+
+`boolean removeAll(Collection c)`,差集，删除当前集合中与目标集合c的共有元素。
+
+## 集合的遍历
+
+集合的遍历采取迭代器模式，`Iterator` 接口是用于遍历集合元素的接口，它的设计目的是提供一种统一的方式来访问集合中的元素。注意，迭代器创建时指向集合第一个元素的前一个。
+
+`boolean hasNext()`询问集合是否还有下一个元素，如果有则返回true，否则返回false
+
+`E next()`返回下一个元素，返回类型是Object
+
+迭代器工作模式：问-取-删（可选）
+
+**书写习惯：字符串变量与字面比较时用字面量.equals(变量)，避免空指针异常**
+
+```
+while(iterator.hasNext()){
+    String str = (String)iterator.next();//这里需要向下转型
+    System.out.println(str);
+}
+```
+
+在迭代器遍历过程中，不能使用集合增删元素，会造成ConcurrentModificationException
+
+```
+while(iterator.hasNext()){
+            String str = (String)iterator.next();
+            if("#".equals(str)){
+                c.remove(str);
+            }
+        }
+//ConcurrentModificationException
+```
+
+可以通过迭代器进行删除
+
+```
+while(iterator.hasNext()){
+            String str = (String)iterator.next();
+            if("#".equals(str)){
+                iterator.remove();
+            }
+        }
+```
+
+### 增强型for循环
+
+也称为 for-each 循环，它只用来遍历集合或数组，语法：for(元素类型 变量名:数组或集合){循环体}
+
+增强型for循环遍历集合会被编译器改为迭代器遍历。
+
+```
+for(Object o : collection){
+    System.out.println(o);
+}
+```
+
+## 泛型
+
+泛型又称为参数化类型，是当使用一个类时，可以去指定该类中某个属性或方法的参数或者方法的返回值的类型，从而避免在运行时发生类型转换异常等问题。
+
+泛型在应用时可以指定确定类型，若不指定则为默认原型：Object
+
+迭代器也支持泛型，定义时与其遍历的集合指定的泛型一致即可。
+
+## List接口
+
+List继承自Collection。
+List的特点:有序且可以重复。数据结构中称为线性表。
+List常用的实现类:
+java.util.ArrayList:内部使用数组实现，特点:查询性能好，增删元素性能弱
+java.util.LinkedList:内部使用链表实现，特点:**首尾**增删元素性能好，查询性能弱
+
+实际上开发中对List集合没有特别的性能要求时，通常使用ArrayList
+
+### get方法
+
+`E get(int index)`获取List集合中指定下标出对应的元素
+
+```
+        List<String> list = new ArrayList<>();
+        list.add("one");
+        list.add("two");
+        list.add("three");
+        list.add("four");
+        list.add("five");
+        String e = list.get(2);//获取第三个元素
+```
+
+### set方法
+
+`E set(int index,E e)`将给定元素e设置到指定下标index处，返回值为被替换的元素，该方法是替换元素操作。
+
+### reverse方法
+
+Collections是集合的工具类，提供了很多静态方法，操作集合
+ `Collections.reverse(list);//反转List集合`
+
+### remove方法
+
+`E remove(int index)`删除并返回指定位置上的元素
+
+### subList方法
+
+获取子集操作
+
+`List subList(int start,int end)`截取当前集合中指定范围内的子集，两个下标含头不含尾
+
+当我们通过某个集合调用subList获取到子集时，**对子集的操作也会同样对原集合进行操作。**
+
+比如，要删除原集合中下标为2~9的元素，先获取2-9的子集，然后清空子集。

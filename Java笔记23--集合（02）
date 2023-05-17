@@ -1,0 +1,173 @@
+## 集合数组互转
+
+### 集合转数组
+
+Collection提供了一个方法toArray，可以将当前集合转换为一个数组。
+
+默认返回一个Object类型的数组，若需要返回指定类型的数组，将指定类型的新数组放入参数中，如`toArray(new String[0])`返回一个String类型的数组。
+
+重载的toArray方法要求我们传入一个需要转换的数组， 长度通常与集合size一致即可。如果数组长度小于集合size,那么toArray方法内部会创建，一个与该数组类型且与集合size等长的数组将其返回。
+
+`String[] array = c.toArray(new String[c.size()]);`
+
+### 数组转集合
+
+数组的工具类Arrays提供了一个静态方法asList，可以将一个数组转换为List集合。asList方法内部: 创建一个名为ArrayList的实例(注意，它不是java.util.ArrayList，而是Arrays自己定义的一个内部类)。该实例会直接引用传入的数组。因此对该集合的操作就是对该数组的操作。
+
+```
+        String[] array = new String[]{"a","b","c","d","e"};
+        System.out.println(Arrays.toString(array));
+        List<String> list = Arrays.asList(array);
+        System.out.println(list);
+//[1, 2, 3, 4, 5]
+//[1, 2, 3, 4, 5]
+```
+
+注意，改变list中的值，array也会相应改变。因为在list中新建了一个ArrayList来装array数组，对ArrayList操作也会对array产生影响。
+
+```
+list.set(2,"f");
+System.out.println(Arrays.toString(array));
+//[a, b, f, d, e]
+```
+
+因为数组定长，所以试图改变长度的操作都是不支持的，UnsupportedOperationException
+
+`list.add("g");//Exception in thread "main" java.lang.UnsupportedOperationException`
+
+新增元素，可以通过新建一个ArrayList，通过addAll方法添加所有list元素到新list中，然后新list进行add操作。
+
+所有集合都支持一种参数为Collection的构造器，作用是在创建该集合时就包含传入集合的所有元素。
+
+```
+List<String> list1 = new ArrayList<>();
+list1.addAll(list);
+list1.add("g");
+System.out.println(list1);
+//[a, b, f, d, e, g]
+//也可以直接合为一步
+List<String> list1 = new ArrayList<>(list);
+list1.add("g");
+```
+## 集合排序
+
+Collections是集合的工具类，提供了很多static方法用于操作集合，其中提供了一个名为sort的方法，可以对List集合进行自然排序。
+
+sort方法进行排序
+
+```
+Random random = new Random();
+List<Integer> list = new ArrayList<>();
+for(int i=0;i<10;i++){
+    list.add(random.nextInt(101));
+}
+System.out.println(list);
+Collections.sort(list);
+System.out.println(list);
+//[7, 48, 99, 60, 41, 30, 75, 22, 98, 11]
+//[7, 11, 22, 30, 41, 48, 60, 75, 98, 99]
+```
+
+打乱顺序使用shuffle方法
+
+```
+        Collections.shuffle(list);
+        System.out.println(list);
+//[41, 75, 22, 60, 30, 99, 11, 7, 48, 98]
+```
+
+### 对自定义类型元素进行排序
+
+sort方法在排序时要求集合元素必须实现Comparable接口
+
+开发中我们定义的类不会去实现Comparable接口。原因: 该排序功能对我们的代码具有侵入性。
+
+侵入性：当使用某个API功能时，其返过来要求我们为它实现接口或做某些继承并定义某些方法时，可以认定，该API功能对代码具有侵入性。
+
+```
+public class SortDemo {
+    public static void main(String[] args) {
+        List<Point> list = new ArrayList<>();
+        list.add(new Point(1,2));
+        list.add(new Point(15,28));
+        list.add(new Point(91,52));
+        list.add(new Point(13,68));
+        list.add(new Point(4,8));
+        System.out.println(list);
+        Collections.sort(list, new Comparator<Point>() {
+            @Override
+            public int compare(Point o1, Point o2) {
+		// 比较标准:点到原点的距离长的大
+                int o1len = o1.getX()*o1.getX() + o1.getY()*o1.getY();
+                int o2len = o2.getX()*o2.getX() + o2.getY()*o2.getY();
+	/*判断大小的返回值:
+            当返回值>0时，表达o1>o2
+            当返回值<0时，表达o1<o2
+            当返回值=0时，表达o1=o2
+	/*
+                return o1len - o2len;
+            }
+        });
+        System.out.println(list);
+    }
+}
+
+```
+
+## Lambda表达式
+
+JKD8之后推出的新特性。
+
+语法：（参数列表）->{
+
+		方法体}
+
+当使用匿名内部类创建时，如果实现的接口**只有一个抽象方法**，则可以使用lambda表达式代替，使代码更简洁优雅。
+
+在java中可以使用lambda表达式代替匿名内部类创建所需要实现的接口时，该接口上都有一个注解：@FunctionalInterface
+
+lambda表达式省去了匿名内部类创建时接口与方法名部分。
+
+如果方法中只有一句代码时，该方法体的花括号可以忽略不写。
+
+如果这句代码含有return关键字时，也要一同忽略return。
+
+lambda表达式实际上时编译器认可的，最终会被改回为内部类方式创建
+
+源代码中使用lambda可以更突出重点-原匿名内部类中重写方法的逻辑。
+
+```
+//自定义比较器的匿名内部类写法
+        Comparator<String> c1 = (String o1, String o2) ->{
+                return o1.length()-o2.length();
+        };
+        Comparator<String> c2 = new Comparator<String>(){
+            public int compare(String o1,String o2){
+                return o1.length()-o2.length();
+            }
+        };
+        Comparator<String> c3 = (o1, o2) ->{
+            return o1.length()-o2.length();
+        };
+        Comparator<String> c4 = (o1, o2) ->o1.length()-o2.length();
+```
+
+JDK8之后，List集合推出了一个sort方法，可以排序自身元素，并且需要传入一个比较器来定义比较规则。
+
+```
+list.sort((o1,o2)->o1.length()-o2.length());
+        System.out.println(list);
+```
+
+List集合foreach遍历
+
+```
+for (String e: collection) {
+            System.out.println(e);
+        }
+//也可以用下列方法
+collection.forEach(s -> System.out.print(s+"\t"));
+//方法引用，对象::方法，当lambda表达式的参数与方法中调用的参数一致时,
+//那么可以写作System.out::println
+collection.forEach(System.out::println);
+```

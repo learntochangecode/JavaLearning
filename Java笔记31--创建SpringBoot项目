@@ -1,0 +1,52 @@
+
+# SpringBoot项目
+
+## 环境准备
+
+（1）JDK 版本至少为8，[JDK8下载链接](https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html)
+（2）IDEA版本2021及之后
+
+## 项目创建
+
+### 1.打开IDEA，点击NEW新建一个项目
+
+![New Project](https://img-blog.csdnimg.cn/42b432d81c5640f5b6bf493007256347.png)
+
+### 2.点击SpringInitializr，根据下图进行设置。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/3824715e2dcf4bf2af4a723facce3f0b.png#pic_center)
+
+**Server URL 设置为阿里云的镜像，https://start.aliyun.com**
+
+Name:项目名
+Language：选择Java
+Type：Maven
+Group：组名
+**JDK:1.8**，注意这里选择1.8
+**Java：8 ​**，注意这里选择8
+
+### 3.选择对应的SpringBoot版本
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/a141586bcd66409ab12102015409acb6.png)
+注意，JDK8选择SpringBoot2.6.13或者2.4.2即可，不要选择3.0.2、2.7.6。
+
+## 项目结构
+
+### 项目根包(./src/main/java/com.xxx.xxx)
+
+SpringBoot项目要求我们将来定义的类和包必须放在这个包下
+
+### 项目启动类(./src/main/java/com.xxx.xxx/xxxApplication)
+
+SpringBoot项目自动生成，里面包含main方法，用来启动
+
+### 静态资源目录(./src/main/resources/static
+
+用来保存当前web应用(我们的网站)中所有的静态资源(页面，图片和其他素材)
+
+## controller的创建
+
+1. 包必须要定义在启动类所在的包中
+2. 我们定义的Controller类上必须要添加一个注解"@Controller",不添加该注解，Spring框架不会调用这个类来处理业务
+3. 添加处理某个请求的业务方法，并且该方法上要添加注解"@RequestMapping",且该注解上要添加一个参数，该参数值与其对应的请求路径一致即可
+4. 获取表单信息,使用请求对象:request.getParameter()获取，这里方法参数为一个字符串要与表单中输入框名字一致

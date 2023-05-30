@@ -1,0 +1,98 @@
+# Map
+
+## Map介绍
+
+java.util.Map 查找表
+Map是java集合框架的一员 ，但Map和Collection不存在继承关系。
+Map体现的结构是一个多行两列的表格，左列称为key，右列称为value
+Map总是以key-value对的形式保存数据
+Map总是根据key获取对应的value
+Map要求key不允许重复(重判断复的依据是equals方法)
+Map是一个接口，下面有常用的实现类:
+java.util.HashMap:散列表，哈希表。是使用散列算法实现的Map
+java.util.TreeMap:使用二叉树算法实现的Map
+
+## Map的创建
+
+`Map<K,V> map = new HashMap<>();`
+
+ <>中为泛型，分别填写key和value的数据类型，用逗号分割。
+
+一般常用的实现类为HashMap和TreeMap。
+
+HashMap后的<>可以省略泛型。
+
+## 元素的添加
+
+`map.put(K k,V v);`
+
+put() 方法将一组键值对添加到map中，返回值为被替换的value值，如果是新增的key，
+
+则返回null。
+
+## 元素的获取
+
+`map.get(K k);`
+
+根据给定的key获取对应的value，如果key不存在，则返回null
+
+## 元素的移除
+
+`map.remove(Object key);`
+
+根据给定的key将Map中对应的键值对删除，返回值为key对应的value。
+
+## 获取元素个数
+
+`map.size();`
+
+##  判断Map是否包含指定的key或value
+
+`map.containsKey(key);map.containsValue(value)`
+
+## 清空Map
+
+`map.clear();`
+
+## Map的遍历
+
+### 1.用keySet遍历所有的key
+
+```
+将当前Map中所有的key以一个Set集合形式返回,K为key的类型
+Set<K> keySet = map.keySet();
+        for(K key : keySet){
+            System.out.println("key:"+key);
+        }
+```
+
+### 2.用entrySet遍历每一组键值对
+
+```
+将当前Map中每一组键值对以一个Entry实例形式表示，再将它们以Set集合形式返回。
+Map.Entry的每一个实例表示Map中的一组键值对，有两个重要的方法
+K getKey():获取对应的key
+V getValue():获取对应的value
+Set<Map.Entry<K,V>> entrySet = map.entrySet();
+    for(Map.Entry<K,V> e: entrySet){
+        K key = e.getKey();
+        V value = e.getValue();
+        System.out.println(key+":"+value);
+    }
+```
+
+### 3.用values遍历所有的value
+
+```
+该方法会将Map中所有的value以一个集合形式返回
+Collection<V> values = map.values();
+    for(V value : values){
+        System.out.println("value:"+value);
+    }
+```
+
+### 4.JDK8之后Map也支持forEach方法基于lambda表达式遍历
+
+```
+map.forEach((k,v)->System.out.println(k+":"+v));
+```

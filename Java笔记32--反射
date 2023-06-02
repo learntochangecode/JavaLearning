@@ -1,0 +1,163 @@
+# 反射
+
+反射机制是Java的动态机制，允许我们在程序运行期间获取类的信息，获取构造函数、方法、字段等信息，并对它们进行操作。反射机制大大地提高了代码的灵活度和可扩展性，但是也会带来较低的运行效率和较多的资源开销，因此反射机制不能被过度使用。
+
+## 类对象
+
+Class的实例，Class的类的每一个实例用于表示一个类，称为类对象。在JVM内部，每个被加载的类都有且只有一个Class的实例与之对应，通过这个类对象可以得知类的一切信息：包信息、类名、构造器、方法、属性等。
+
+反射操作的第一件事就是获取要操作的类的类对象：
+
+### 获取一个类的类对象方式
+
+1.调用类名.class属性
+
+`Class cls = xxx.class; ​`
+
+2.使用Class.forName()方法
+
+通过指定类的完全限定名（包名+类名）来加载并获取类的类对象
+
+`Class cls =Class.forName("java.lang.String");`
+
+3.ClassLoader获取类对象
+
+**类加载路径，获取的是target里的classes包目录。**
+
+`类名.class.getClassLoader().getResource(".").toURI()`
+
+去掉getClassLoader,获取的是当前类的字节码文件的上级包目录:
+
+`类名.class.getResource(".").toURI()`
+
+## .class、getClass()和Class.forName()主要有以下区别:
+
+.class
+
+* 用法:ClassName.class
+* 返回 Class 对象,但不加载类
+* 编译时就确定
+
+getClass()
+
+* 用法:对象.getClass()
+* 返回代表这个对象所属类的 Class对象
+* 在对象创建时就已加载过类
+
+Class.forName()
+
+* 用法:Class.forName(className)
+* 根据类的全限定名加载类,返回 Class对象
+* 这将导致类实际加载
+
+主要区别集中在:
+
+1. 它们是否需要对象实例
+2. 它们是否实际加载类
+
+.class 不需要对象实例,只返回 Class信息但不实际加载类。
+
+getClass()需要对象实例,代表已加载的类。
+
+Class.forName()不需要对象实例,但会实际加载类。
+
+用途上:
+
+.class仅用于编译时类型检查
+
+getClass()用于获取已存在对象的类信息
+
+Class.forName()用于需要先加载类信息的场景,如通过类名获取类。
+
+总的来说:
+
+* .class仅返回编译时类型,不加载类
+* getClass()返回表示已加载对象所属类的Class对象
+* Class.forName()通过类名加载类,返回Class对象
+
+## 包对象
+
+Package类:包对象，该类的每一个实例用于表示一个包的信息。
+
+```
+Package p = Class.forName(className).getPackage();//获取包
+String pname = p.getName();//通过包对象可以获取包名
+```
+
+## 反射机制的实例化
+
+### 无参构造器实例化
+
+1.获取要实例化对象的类的类对象
+
+2.可以直接通过类对象的newInstance()方法调用公开的无参构造器实例化
+
+```
+Class cls = Class.forName("java.lang.String");
+Object obj = cls.newInstance();
+```
+
+### 使用特定的构造器实例化对象
+
+步骤
+1:加载类对象
+2:通过类对象获取指定的构造器
+3:通过构造器对象实例化
+Constructor类:构造器对象，该类的每一个实例用于表示某个类中的指定构造器
+
+```
+Class cls = Class.forName("reflect.Person");
+Constructor con = cls.getConstructor();//获取无参构造器
+//获取有参构造器，getConstructor的方法参数填写参数对象的类信息
+Constructor con1 = cls.getConstructor(String.class,int.class);
+//也可以提供参数对象类信息的Class类型数组
+Constructor con2 = cls.getConstructor(new Class[]{String.class,int.class});
+Object obj = con1.newInstance("张三",22);
+```
+
+## 方法对象
+
+Method类：方法对象，该类的每一个实例用于表示一个方法，通过方法对象，可以获取该方法的信息(方法名，返回值类型，参数类型，参数个数等)，还可以调用该方法。
+
+Class的getMethods()方法可以获取其表示的类的所有【公开】方法，包含从超类继承下来的。
+
+### 使用反射机制调用方法
+
+获取类对象->通过类对象实例化->通过类对象获取要调用的方法->通过方法对象执行该方法。
+
+### invoke方法
+
+`Object invoke(Object p,Object... args)`
+该方法用于执行当前方法对象所表示的方法，参数为该方法的所属对象
+
+### getModifiers方法
+
+`int getModifiers()` 返回当前方法对象所表示的方法的语言修饰符
+
+### getParameterCount方法
+
+`int getParameterCount()`返回当前方法对象所表示的方法的参数个数
+
+### 暴力反射，在反射机制中强制访问一个类的私有成员。
+
+`getMethod()和getMethods()`
+只能获取当前类对象所表示的类的所有公开方法，包括从超类继承的方法。
+
+`getDeclaredMethod()和getDeclaredMethods()`
+可以获取当前类对象所表示的类自己定义的方法，不含继承的方法。
+
+`method.setAccessible(true);//强行打开其访问权限`
+
+使用setAccessible方法，可以调用该私有方法。
+
+### 变长参数
+
+JDK5之后推出了一个特性:方法的参数个数可以增加，所有实参都会被编译器改为数组。
+
+变长参数一个方法只能有一个，且必须是最后一个参数。
+
+```
+public static void doSome(String... s){
+    System.out.println(s.length);//这里的s参数就是String类型的数组
+}
+```
